@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clasificador de Serpientes</title>
+    <script>
+        function clasificarInsecto(event) {
+            event.preventDefault();
+            const L = document.getElementById('L').value;
+            const R = document.getElementById('R').value;
+            const A_M = document.getElementById('A_M').value;
+
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `L=${L}&R=${R}&A_M=${A_M}`,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('resultado').innerText = 'Error: ' + data.error;
+                } else {
+                    document.getElementById('resultado').innerText = 'La estrella es de tipo: ' + data.categoria;
+                }
+            })
+            .catch(error => {
+                document.getElementById('resultado').innerText = 'Error en la solicitud.';
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Clasificador de Insectos</h1>
+        <form id="formulario" onsubmit="clasificarInsecto(event)">
+    
+            <label for="L">L:</label>
+            <input type="text" id="L" name="L"><br>
+    
+            <label for="R">R:</label>
+            <input type="text" id="R" name="R"><br>
+    
+            <label for="A_M">A_M:</label>
+            <input type="text" id="A_M" name="A_M"><br>
+    
+            <input type="submit" value="Enviar">
+
+        </form>
+        <p id="resultado"></p>
+</body>
+</html>
